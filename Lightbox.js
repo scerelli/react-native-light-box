@@ -3,20 +3,19 @@
  */
 'use strict';
 
-var React = require('react');
-var {
-  Children,
-  cloneElement,
-  PropTypes,
-} = React;
-var {
+import React, { Children, cloneElement, PropTypes }  from 'react';
+import {
   Animated,
   TouchableHighlight,
   View,
-} = require('react-native');
+  Dimensions
+} from 'react-native';
 var TimerMixin = require('react-timer-mixin');
 
 var LightboxOverlay = require('./LightboxOverlay');
+
+const { width, height } = Dimensions.get('window');
+const vp_height = height;
 
 var Lightbox = React.createClass({
   mixins: [TimerMixin],
@@ -34,11 +33,13 @@ var Lightbox = React.createClass({
       friction:      PropTypes.number,
     }),
     swipeToDismiss:  PropTypes.bool,
+    lanxy         :  PropTypes.bool
   },
 
   getDefaultProps: function() {
     return {
       swipeToDismiss: true,
+      lanxy         : false,
       onOpen: () => {},
       onClose: () => {},
     };
@@ -85,7 +86,7 @@ var Lightbox = React.createClass({
   open: function() {
     this._root.measure((ox, oy, width, height, px, py) => {
       this.props.onOpen();
-
+      
       this.setState({
         isOpen: (this.props.navigator ? true : false),
         isAnimating: true,
@@ -93,7 +94,7 @@ var Lightbox = React.createClass({
           width,
           height,
           x: px,
-          y: py,
+          y: (this.props.lanxy) ? vp_height: py,
         },
       }, () => {
         if(this.props.navigator) {
@@ -140,7 +141,7 @@ var Lightbox = React.createClass({
         style={this.props.style}
         onLayout={() => {}}
       >
-        <Animated.View style={{opacity: this.state.layoutOpacity}}>
+        <Animated.View style={{opacity: 1}}>
           <TouchableHighlight
             underlayColor={this.props.underlayColor}
             onPress={this.open}

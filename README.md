@@ -1,9 +1,11 @@
-# react-native-lightbox
+# Special Thanks
+
+- This repository was originally authored by [oblador](https://github.com/oblador) and was forked from [react-native-lightbox:4665b3e](https://github.com/oblador/react-native-lightbox/tree/4665b3ea31a71c0a0eed5d1658ae082aeabdd613).
 
 ## Installation
 
 ```
-npm install --save react-native-lightbox
+npm install --save react-native-light-box
 ```
 
 **This module requires React Native 0.11 or later**
@@ -13,7 +15,7 @@ npm install --save react-native-lightbox
 `navigator` property is optional but recommended on iOS, see next section for `Navigator` configuration.
 
 ```js
-var Lightbox = require('react-native-lightbox');
+var Lightbox = require('react-native-light-box');
 
 var LightboxView = React.createClass({
   render: function() {
@@ -76,11 +78,9 @@ var MyApp = React.createClass({
 
 ![Demo](https://cloud.githubusercontent.com/assets/378279/9074360/16eac5d6-3b09-11e5-90af-a69980e9f4be.gif)
 
-## Example 
+# Contact
 
-Check full example in the `Example` folder. 
-
-## License
-
-[MIT License](http://opensource.org/licenses/mit-license.html). © Joel Arvidsson
-
+- Fork maintainer(s):
+  - github@plan.xyz
+- Original author:
+  - joel@oblador.se

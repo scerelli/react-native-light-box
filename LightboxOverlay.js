@@ -3,11 +3,8 @@
  */
 'use strict';
 
-var React = require('react');
-var {
-  PropTypes,
-} = React;
-var {
+import React, { Component, PropTypes }  from 'react';
+import {
   Animated,
   Dimensions,
   Modal,
@@ -18,7 +15,7 @@ var {
   Text,
   TouchableOpacity,
   View,
-} = require('react-native');
+} from 'react-native';
 
 var WINDOW_HEIGHT = Dimensions.get('window').height;
 var WINDOW_WIDTH = Dimensions.get('window').width;
@@ -54,6 +51,7 @@ var LightboxOverlay = React.createClass({
         y: 0,
         opacity: 1,
       },
+      isClosed: false,
       pan: new Animated.Value(0),
       openVal: new Animated.Value(0),
     };
@@ -119,7 +117,8 @@ var LightboxOverlay = React.createClass({
         x: 0,
         y: 0,
         opacity: 1,
-      }
+      },
+      isClosed: false
     });
 
     Animated.spring(
@@ -132,7 +131,11 @@ var LightboxOverlay = React.createClass({
     StatusBar.setHidden(false, 'fade');
     this.setState({
       isAnimating: true,
+      isClosed: true
     });
+    // this.state.openVal.setValue(0);
+    // this.props.onClose();
+    
     Animated.spring(
       this.state.openVal,
       { toValue: 0, ...this.props.springConfig }
@@ -184,13 +187,14 @@ var LightboxOverlay = React.createClass({
       lightboxOpacityStyle.opacity = this.state.pan.interpolate({inputRange: [-WINDOW_HEIGHT, 0, WINDOW_HEIGHT], outputRange: [0, 1, 0]});
     }
 
+    let h = (this.state.isClosed) ? 0 : WINDOW_HEIGHT;
     var openStyle = [styles.open, {
       left:   openVal.interpolate({inputRange: [0, 1], outputRange: [origin.x, target.x]}),
       top:    openVal.interpolate({inputRange: [0, 1], outputRange: [origin.y + STATUS_BAR_OFFSET, target.y + STATUS_BAR_OFFSET]}),
       width:  openVal.interpolate({inputRange: [0, 1], outputRange: [origin.width, WINDOW_WIDTH]}),
       height: openVal.interpolate({inputRange: [0, 1], outputRange: [origin.height, WINDOW_HEIGHT]}),
     }];
-
+    
     var background = (<Animated.View style={[styles.background, { backgroundColor: backgroundColor }, lightboxOpacityStyle]}></Animated.View>);
     var header = (<Animated.View style={[styles.header, lightboxOpacityStyle]}>{(renderHeader ?
       renderHeader(this.close) :
