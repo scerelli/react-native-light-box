@@ -1,4 +1,4 @@
-# Special Thanks
+## Special Thanks
 
 - This repository was originally authored by [oblador](https://github.com/oblador) and was forked from [react-native-lightbox:4665b3e](https://github.com/oblador/react-native-lightbox/tree/4665b3ea31a71c0a0eed5d1658ae082aeabdd613).
 
@@ -78,9 +78,9 @@ var MyApp = React.createClass({
 
 ![Demo](https://cloud.githubusercontent.com/assets/378279/9074360/16eac5d6-3b09-11e5-90af-a69980e9f4be.gif)
 
-# Contact
+## Contact
 
 - Fork maintainer(s):
-  - github@plan.xyz
+  - developers@plan.xyz
 - Original author:
   - joel@oblador.se
