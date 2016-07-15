@@ -135,7 +135,7 @@ var LightboxOverlay = React.createClass({
     });
     // this.state.openVal.setValue(0);
     // this.props.onClose();
-    
+
     Animated.spring(
       this.state.openVal,
       { toValue: 0, ...this.props.springConfig }
@@ -161,6 +161,10 @@ var LightboxOverlay = React.createClass({
       origin,
       backgroundColor,
     } = this.props;
+
+    if(typeof this.props.origin === 'undefined') {
+      throw new Error('If you passed a navigator check to add props to the component in your `renderScene` function');
+    }
 
     var {
       isPanning,
@@ -194,7 +198,7 @@ var LightboxOverlay = React.createClass({
       width:  openVal.interpolate({inputRange: [0, 1], outputRange: [origin.width, WINDOW_WIDTH]}),
       height: openVal.interpolate({inputRange: [0, 1], outputRange: [origin.height, WINDOW_HEIGHT]}),
     }];
-    
+
     var background = (<Animated.View style={[styles.background, { backgroundColor: backgroundColor }, lightboxOpacityStyle]}></Animated.View>);
     var header = (<Animated.View style={[styles.header, lightboxOpacityStyle]}>{(renderHeader ?
       renderHeader(this.close) :

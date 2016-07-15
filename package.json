@@ -7,8 +7,6 @@
     "test": "flow check"
   },
   "keywords": [
-    "planxyz",
-    "plan xyz",
     "react-native",
     "react-component",
     "react-native-component",
@@ -23,16 +21,16 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/planxyz/react-native-light-box"
+    "url": "https://github.com/scerelli/react-native-light-box"
   },
   "author": {
-    "email": "developers@plan.xyz",
-    "name": "plan xyz",
-    "url": "http://plan.xyz"
+    "email": "info@stefanocerelli.com",
+    "name": "Stefano Cerelli",
+    "url": "http://stefanocerelli.com"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/planxyz/react-native-light-box/issues"
+    "url": "https://github.com/scerelli/react-native-light-box/issues"
   },
   "contributors": [
     {
@@ -49,9 +47,14 @@
       "email": "melvyn@plan.xyz",
       "name": "Melvyn Kim",
       "url": "https://github.com/melvyn-planxyz"
+    },
+    {
+      "email": "info@stefanocerelli.com",
+      "name": "Stefano Cerelli",
+      "url": "https://github.com/scerelli"
     }
   ],
-  "homepage": "https://github.com/planxyz/react-native-light-box",
+  "homepage": "https://github.com/scerelli/react-native-light-box",
   "dependencies": {
     "react-timer-mixin": "^0.13.3"
   }
