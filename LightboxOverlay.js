@@ -42,6 +42,7 @@ var LightboxOverlay = React.createClass({
     onClose:         PropTypes.func,
     isPanning:  PropTypes.func,
     isPanningEnd:  PropTypes.func,
+    onPanRelease: PropTypes.func,
     isAnimating:  PropTypes.func,
     isAnimatingEnd:  PropTypes.func,
     beforeClose:  PropTypes.func,
@@ -88,6 +89,7 @@ var LightboxOverlay = React.createClass({
       ]),
       onPanResponderTerminationRequest: (evt, gestureState) => true,
       onPanResponderRelease: (evt, gestureState) => {
+        this.props.onPanRelease()
         if(Math.abs(gestureState.dy) > DRAG_DISMISS_THRESHOLD) {
           this.setState({
             isPanning: false,

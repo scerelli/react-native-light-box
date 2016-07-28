@@ -46,7 +46,8 @@ var Lightbox = React.createClass({
       isAnimatingEnd: () => {},
       isPanning: () => {},
       isPanningEnd: () => {},
-      beforeClose: () => {}
+      beforeClose: () => {},
+      onPanRelease: () => {}
     };
   },
 
@@ -90,7 +91,8 @@ var Lightbox = React.createClass({
       isAnimatingEnd: this.props.isAnimatingEnd,
       isPanning: this.props.isPanning,
       isPanningEnd: this.props.isPanningEnd,
-      beforeClose: this.props.beforeClose
+      beforeClose: this.props.beforeClose,
+      onPanRelease: this.props.onPanRelease
     };
   },
 
