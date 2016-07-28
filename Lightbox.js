@@ -93,6 +93,7 @@ var Lightbox = React.createClass({
       isPanningEnd: this.props.isPanningEnd,
       beforeClose: this.props.beforeClose,
       onPanRelease: this.props.onPanRelease
+      renderFooter: this.props.renderFooter
     };
   },
 

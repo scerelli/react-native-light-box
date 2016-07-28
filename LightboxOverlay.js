@@ -38,6 +38,7 @@ var LightboxOverlay = React.createClass({
     backgroundColor: PropTypes.string,
     isOpen:          PropTypes.bool,
     renderHeader:    PropTypes.func,
+    renderFooter:    PropTypes.object,
     onOpen:          PropTypes.func,
     onClose:         PropTypes.func,
     isPanning:  PropTypes.func,
@@ -169,6 +170,7 @@ var LightboxOverlay = React.createClass({
     var {
       isOpen,
       renderHeader,
+      renderFooter,
       swipeToDismiss,
       origin,
       backgroundColor
@@ -220,6 +222,16 @@ var LightboxOverlay = React.createClass({
         </TouchableOpacity>
       )
     )}</Animated.View>);
+
+    var footer = null
+    if(renderFooter) {
+      footer = (
+        <Animated.View style={[lightboxOpacityStyle]}>
+          {renderFooter}
+        </Animated.View>
+      )
+    }
+    var header = ();
     var content = (
       <Animated.View style={[openStyle, dragStyle]} {...handlers}>
         {this.props.children}
@@ -231,6 +243,7 @@ var LightboxOverlay = React.createClass({
           {background}
           {content}
           {header}
+          {footer}
         </View>
       );
     }
@@ -240,6 +253,7 @@ var LightboxOverlay = React.createClass({
         {background}
         {content}
         {header}
+        {footer}
       </Modal>
     );
   }
