@@ -226,12 +226,12 @@ var LightboxOverlay = React.createClass({
     var footer = null
     if(renderFooter) {
       footer = (
-        <Animated.View style={[lightboxOpacityStyle]}>
+        <Animated.View style={[styles.footer, lightboxOpacityStyle]}>
           {renderFooter}
         </Animated.View>
       )
     }
-    var header = ();
+
     var content = (
       <Animated.View style={[openStyle, dragStyle]} {...handlers}>
         {this.props.children}
@@ -280,6 +280,14 @@ var styles = StyleSheet.create({
     left: 0,
     width: WINDOW_WIDTH,
     backgroundColor: 'transparent',
+  },
+  footer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    width: WINDOW_WIDTH,
+    backgroundColor: 'transparent'
   },
   closeButton: {
     fontSize: 35,
