@@ -2,6 +2,7 @@
  * @providesModule LightboxOverlay
  */
 'use strict';
+global.headerclose = null; //resolve headerclose crash
 
 import React, { Component, PropTypes }  from 'react';
 import {
@@ -39,6 +40,11 @@ var LightboxOverlay = React.createClass({
     renderHeader:    PropTypes.func,
     onOpen:          PropTypes.func,
     onClose:         PropTypes.func,
+    isPanning:  PropTypes.func,
+    isPanningEnd:  PropTypes.func,
+    isAnimating:  PropTypes.func,
+    isAnimatingEnd:  PropTypes.func,
+    beforeClose:  PropTypes.func,
     swipeToDismiss:  PropTypes.bool,
   },
 
@@ -74,7 +80,7 @@ var LightboxOverlay = React.createClass({
 
       onPanResponderGrant: (evt, gestureState) => {
         this.state.pan.setValue(0);
-        this.setState({ isPanning: true });
+        this.setState({ isPanning: true }, this.props.isPanning);
       },
       onPanResponderMove: Animated.event([
         null,
@@ -90,19 +96,22 @@ var LightboxOverlay = React.createClass({
               x: gestureState.dx,
               opacity: 1 - Math.abs(gestureState.dy / WINDOW_HEIGHT)
             }
+          }, function() {
+            this.props.isPanningEnd()
           });
           this.close();
         } else {
           Animated.spring(
             this.state.pan,
             {toValue: 0, ...this.props.springConfig}
-          ).start(() => { this.setState({ isPanning: false }); });
+          ).start(() => { this.setState({ isPanning: false }, this.props.isPanningEnd); });
         }
       },
     });
   },
 
   componentDidMount: function() {
+    headerclose = this;
     if(this.props.isOpen) {
       this.open();
     }
@@ -118,31 +127,32 @@ var LightboxOverlay = React.createClass({
         y: 0,
         opacity: 1,
       },
-      isClosed: false
-    });
+      isClosed: false,
+    }, this.props.isAnimating);
 
     Animated.spring(
       this.state.openVal,
       { toValue: 1, ...this.props.springConfig }
-    ).start(() => this.setState({ isAnimating: false }));
+    ).start(() => this.setState({ isAnimating: false }, this.props.isAnimatingEnd));
   },
 
   close: function() {
     StatusBar.setHidden(false, 'fade');
+    this.props.beforeClose();
     this.setState({
       isAnimating: true,
       isClosed: true
-    });
+    }, this.props.isAnimating);
     // this.state.openVal.setValue(0);
     // this.props.onClose();
-    
+
     Animated.spring(
       this.state.openVal,
       { toValue: 0, ...this.props.springConfig }
     ).start(() => {
       this.setState({
         isAnimating: false,
-      });
+      }, this.props.isAnimatingEnd);
       this.props.onClose();
     });
   },
@@ -159,8 +169,12 @@ var LightboxOverlay = React.createClass({
       renderHeader,
       swipeToDismiss,
       origin,
-      backgroundColor,
+      backgroundColor
     } = this.props;
+
+    if(typeof this.props.origin === 'undefined') {
+      throw new Error('If you passed a navigator check to add props to the component in your `renderScene` function');
+    }
 
     var {
       isPanning,
@@ -194,10 +208,10 @@ var LightboxOverlay = React.createClass({
       width:  openVal.interpolate({inputRange: [0, 1], outputRange: [origin.width, WINDOW_WIDTH]}),
       height: openVal.interpolate({inputRange: [0, 1], outputRange: [origin.height, WINDOW_HEIGHT]}),
     }];
-    
+
     var background = (<Animated.View style={[styles.background, { backgroundColor: backgroundColor }, lightboxOpacityStyle]}></Animated.View>);
     var header = (<Animated.View style={[styles.header, lightboxOpacityStyle]}>{(renderHeader ?
-      renderHeader(this.close) :
+      () => renderHeader(this.close) :
       (
         <TouchableOpacity onPress={this.close}>
           <Text style={styles.closeButton}>×</Text>
@@ -218,6 +232,7 @@ var LightboxOverlay = React.createClass({
         </View>
       );
     }
+
     return (
       <Modal visible={isOpen} transparent={true}>
         {background}

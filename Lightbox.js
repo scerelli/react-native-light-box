@@ -42,6 +42,11 @@ var Lightbox = React.createClass({
       lanxy         : false,
       onOpen: () => {},
       onClose: () => {},
+      isAnimating: () => {},
+      isAnimatingEnd: () => {},
+      isPanning: () => {},
+      isPanningEnd: () => {},
+      beforeClose: () => {}
     };
   },
 
@@ -77,16 +82,22 @@ var Lightbox = React.createClass({
       renderHeader: this.props.renderHeader,
       swipeToDismiss: this.props.swipeToDismiss,
       springConfig: this.props.springConfig,
+      onRequestClose: this.props.onRequestClose,
       backgroundColor: this.props.backgroundColor,
       children: this.getContent(),
       onClose: this.onClose,
+      isAnimating: this.props.isAnimating,
+      isAnimatingEnd: this.props.isAnimatingEnd,
+      isPanning: this.props.isPanning,
+      isPanningEnd: this.props.isPanningEnd,
+      beforeClose: this.props.beforeClose
     };
   },
 
   open: function() {
     this._root.measure((ox, oy, width, height, px, py) => {
       this.props.onOpen();
-      
+
       this.setState({
         isOpen: (this.props.navigator ? true : false),
         isAnimating: true,
@@ -100,7 +111,7 @@ var Lightbox = React.createClass({
         if(this.props.navigator) {
           var route = {
             component: LightboxOverlay,
-            passProps: this.getOverlayProps(),
+            props: this.getOverlayProps(),
           };
           var routes = this.props.navigator.getCurrentRoutes();
           routes.push(route);
