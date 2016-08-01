@@ -26,6 +26,7 @@ var Lightbox = React.createClass({
     renderContent:   PropTypes.func,
     underlayColor:   PropTypes.string,
     backgroundColor: PropTypes.string,
+    onPress:         PropTypes.func,
     onOpen:          PropTypes.func,
     onClose:         PropTypes.func,
     springConfig:    PropTypes.shape({
@@ -33,21 +34,25 @@ var Lightbox = React.createClass({
       friction:      PropTypes.number,
     }),
     swipeToDismiss:  PropTypes.bool,
-    lanxy         :  PropTypes.bool
+    lanxy         :  PropTypes.bool,
+    hideUiOnPress: PropTypes.bool
   },
 
   getDefaultProps: function() {
     return {
       swipeToDismiss: true,
       lanxy         : false,
+      hideUiOnPress: true,
       onOpen: () => {},
       onClose: () => {},
       isAnimating: () => {},
       isAnimatingEnd: () => {},
       isPanning: () => {},
+      opened: () => {},
       isPanningEnd: () => {},
       beforeClose: () => {},
-      onPanRelease: () => {}
+      onPanRelease: () => {},
+      onPress: () => {}
     };
   },
 
@@ -83,24 +88,25 @@ var Lightbox = React.createClass({
       renderHeader: this.props.renderHeader,
       swipeToDismiss: this.props.swipeToDismiss,
       springConfig: this.props.springConfig,
-      onRequestClose: this.props.onRequestClose,
       backgroundColor: this.props.backgroundColor,
       children: this.getContent(),
       onClose: this.onClose,
+      opened: this.props.opened,
       isAnimating: this.props.isAnimating,
       isAnimatingEnd: this.props.isAnimatingEnd,
       isPanning: this.props.isPanning,
       isPanningEnd: this.props.isPanningEnd,
       beforeClose: this.props.beforeClose,
       onPanRelease: this.props.onPanRelease,
-      renderFooter: this.props.renderFooter
+      renderFooter: this.props.renderFooter,
+      onPress: this.props.onPress,
+      hideUiOnPress: this.props.hideUiOnPress,
     };
   },
 
   open: function() {
+    this.props.onOpen();
     this._root.measure((ox, oy, width, height, px, py) => {
-      this.props.onOpen();
-
       this.setState({
         isOpen: (this.props.navigator ? true : false),
         isAnimating: true,
@@ -114,11 +120,12 @@ var Lightbox = React.createClass({
         if(this.props.navigator) {
           var route = {
             component: LightboxOverlay,
-            props: this.getOverlayProps(),
+            props: this.getOverlayProps()
           };
           var routes = this.props.navigator.getCurrentRoutes();
           routes.push(route);
           this.props.navigator.immediatelyResetRouteStack(routes);
+
         } else {
           this.setState({
             isOpen: true,

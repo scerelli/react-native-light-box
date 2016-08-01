@@ -39,7 +39,6 @@ var LightboxOverlay = React.createClass({
     isOpen:          PropTypes.bool,
     renderHeader:    PropTypes.func,
     renderFooter:    PropTypes.object,
-    onOpen:          PropTypes.func,
     onClose:         PropTypes.func,
     isPanning:  PropTypes.func,
     isPanningEnd:  PropTypes.func,
@@ -60,8 +59,10 @@ var LightboxOverlay = React.createClass({
         opacity: 1,
       },
       isClosed: false,
+      panningCbFired: false,
       pan: new Animated.Value(0),
       openVal: new Animated.Value(0),
+      hideUi: false,
     };
   },
 
@@ -72,6 +73,8 @@ var LightboxOverlay = React.createClass({
     };
   },
 
+  _initialTouchX: 0,
+  _initialTouchY: 0,
   componentWillMount: function() {
     this._panResponder = PanResponder.create({
       // Ask to be the responder:
@@ -79,35 +82,63 @@ var LightboxOverlay = React.createClass({
       onStartShouldSetPanResponderCapture: (evt, gestureState) => !this.state.isAnimating,
       onMoveShouldSetPanResponder: (evt, gestureState) => !this.state.isAnimating,
       onMoveShouldSetPanResponderCapture: (evt, gestureState) => !this.state.isAnimating,
-
+      onPanResponderTerminationRequest: (evt, gestureState) => true,
       onPanResponderGrant: (evt, gestureState) => {
+        this._pageX = evt.nativeEvent.pageX;
+        this._pageY = evt.nativeEvent.pageY;
         this.state.pan.setValue(0);
-        this.setState({ isPanning: true }, this.props.isPanning);
       },
-      onPanResponderMove: Animated.event([
-        null,
-        {dy: this.state.pan}
-      ]),
+      onPanResponderMove: (evt, { dx, dy, x0, y0 }) => {
+        this.setState({ isPanning: true });
+        if (!this.state.panningCbFired) {
+          this.setState({
+            panningCbFired: true,
+            hideUi: true
+          }, this.props.isPanning)
+        } else if (!this.state.hideUi){
+          this.setState({
+            hideUi: true
+          })
+        }
+        this.state.pan.setValue(dy)
+      },
       onPanResponderTerminationRequest: (evt, gestureState) => true,
       onPanResponderRelease: (evt, gestureState) => {
         this.props.onPanRelease()
         if(Math.abs(gestureState.dy) > DRAG_DISMISS_THRESHOLD) {
           this.setState({
             isPanning: false,
+            panningCbFired: false,
+            hideUi: false,
             target: {
               y: gestureState.dy,
               x: gestureState.dx,
               opacity: 1 - Math.abs(gestureState.dy / WINDOW_HEIGHT)
             }
-          }, function() {
-            this.props.isPanningEnd()
-          });
+          }, this.props.isPanningEnd);
           this.close();
         } else {
-          Animated.spring(
-            this.state.pan,
-            {toValue: 0, ...this.props.springConfig}
-          ).start(() => { this.setState({ isPanning: false }, this.props.isPanningEnd); });
+          if(this._pageX === evt.nativeEvent.pageX && this._pageY === evt.nativeEvent.pageY) {
+            this.props.onPress();
+            this.setState({
+              panningCbFired: false,
+              hideUi: !this.state.hideUi
+            });
+          } else {
+            this.setState({
+              panningCbFired: false,
+              hideUi: false
+            });
+          }
+
+          Animated.spring(this.state.pan, {
+            toValue: 0,
+            ...this.props.springConfig
+          }).start(() => {
+            this.setState({
+              isPanning: false
+            }, this.props.isPanningEnd)
+          });
         }
       },
     });
@@ -214,7 +245,7 @@ var LightboxOverlay = React.createClass({
     }];
 
     var background = (<Animated.View style={[styles.background, { backgroundColor: backgroundColor }, lightboxOpacityStyle]}></Animated.View>);
-    var header = (<Animated.View style={[styles.header, lightboxOpacityStyle]}>{(renderHeader ?
+    var header = (<Animated.View style={[styles.header, this.state.hideUi ? {opacity: 0} : lightboxOpacityStyle]}>{(renderHeader ?
       () => renderHeader(this.close) :
       (
         <TouchableOpacity onPress={this.close}>
@@ -226,7 +257,7 @@ var LightboxOverlay = React.createClass({
     var footer = null
     if(renderFooter) {
       footer = (
-        <Animated.View style={[styles.footer, lightboxOpacityStyle]}>
+        <Animated.View style={[styles.footer, this.state.hideUi ? {opacity: 0} : lightboxOpacityStyle]}>
           {renderFooter}
         </Animated.View>
       )
