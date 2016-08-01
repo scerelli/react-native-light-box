@@ -82,7 +82,6 @@ var LightboxOverlay = React.createClass({
       onStartShouldSetPanResponderCapture: (evt, gestureState) => !this.state.isAnimating,
       onMoveShouldSetPanResponder: (evt, gestureState) => !this.state.isAnimating,
       onMoveShouldSetPanResponderCapture: (evt, gestureState) => !this.state.isAnimating,
-      onPanResponderTerminationRequest: (evt, gestureState) => true,
       onPanResponderGrant: (evt, gestureState) => {
         this._pageX = evt.nativeEvent.pageX;
         this._pageY = evt.nativeEvent.pageY;
