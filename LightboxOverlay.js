@@ -101,7 +101,6 @@ var LightboxOverlay = React.createClass({
         }
         this.state.pan.setValue(dy)
       },
-      onPanResponderTerminationRequest: (evt, gestureState) => true,
       onPanResponderRelease: (evt, gestureState) => {
         this.props.onPanRelease()
         if(Math.abs(gestureState.dy) > DRAG_DISMISS_THRESHOLD) {
